@@ -13,15 +13,20 @@ for user in $users; do
     fi
 done
 
+# Function to capitalize first letter
+capitalize() {
+    echo "$1" | awk '{print toupper(substr($0, 1, 1)) substr($0, 2)}'
+}
+
 # Capitalize first letter of firstname and lastname
-#firstname2="${firstname^}"
-#lastname2="${lastname^}"
+firstname=$(capitalize "$firstname")
+lastname=$(capitalize "$lastname")
 
 # Extract Model
 model=$(system_profiler SPHardwareDataType | awk -F': ' '/Model Name/ {print $2}')
 
 # Sanitize hostname
-sanitized_hostname=$(echo "$firstname^ $lastname^ $model" | tr -cd '[:alnum:]-')
+sanitized_hostname=$(echo "$firstname$lastname-$model" | tr -cd '[:alnum:]-')
 
 # Set name and model
 sudo scutil --set ComputerName "$firstname $lastname $model"
