@@ -1,17 +1,17 @@
 #!/bin/bash
 # Samuel Marino 20/Nov/2023
 
-# Get List of users
-users=$(dscl . -list /Users | grep -v '^_')
+# Get the most recent logged-in user
+last_user=$(last -1 | awk '{print $1}')
 
 # Extract staff user and set first/last name variables
-for user in $users; do
-    if [[ $user =~ ^([^.]+)\.([^.]+)$ && $user != "it.admin" ]]; then
-        firstname=${BASH_REMATCH[1]}
-        lastname=${BASH_REMATCH[2]}
-        break
-    fi
-done
+if [[ $last_user =~ ^([^.]+)\.([^.]+)$ && $last_user != "it.admin" ]]; then
+    firstname=${BASH_REMATCH[1]}
+    lastname=${BASH_REMATCH[2]}
+else
+    echo "Last user is it.admin. Exiting."
+    exit 1
+fi
 
 # Function to capitalize first letter
 capitalize() {
